@@ -1,0 +1,7 @@
+{
+  "provider": "azure",
+  "subscription_id": "yoursub",
+  "tenant_id": "yourtenant",
+  "client_id": "yourclient",
+  "client_secret": "yoursecret"
+}

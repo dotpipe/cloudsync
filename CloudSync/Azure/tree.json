@@ -1,0 +1,15 @@
+{
+    "configs": {
+        "myapp/dev/arm-template.json": "Config file for Azure arm-template.json"
+        ,
+        "myapp/dev/env.json": "Config file for Azure env.json"
+        ,
+        "myapp/dev/parameters.json": "Config file for Azure parameters.json"
+        ,
+        "myapp/prod/arm-template.json": "Config file for Azure arm-template.json"
+        ,
+        "myapp/prod/env.json": "Config file for Azure env.json"
+        ,
+        "myapp/prod/parameters.json": "Config file for Azure parameters.json"
+    }
+}

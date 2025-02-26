@@ -1,0 +1,7 @@
+{
+  "provider": "siteground",
+  "domain": "myshop.org",
+  "cpanel_username": "siteuser",
+  "cpanel_password": "sitepass",
+  "ftp_host": "ftp.myshop.org"
+}

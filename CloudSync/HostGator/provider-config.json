@@ -1,0 +1,7 @@
+{
+  "provider": "hostgator",
+  "domain": "myblog.net",
+  "cpanel_username": "gatoruser",
+  "cpanel_password": "gatorpass",
+  "ftp_host": "ftp.myblog.net"
+}

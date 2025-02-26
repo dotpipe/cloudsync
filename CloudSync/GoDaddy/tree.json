@@ -1,0 +1,11 @@
+{
+    "configs": {
+        "mydomain.com/dev/dns-settings.txt": "Config file for GoDaddy dns-settings.txt"
+        ,
+        "mydomain.com/dev/env.json": "Config file for GoDaddy env.json"
+        ,
+        "mydomain.com/prod/dns-settings.txt": "Config file for GoDaddy dns-settings.txt"
+        ,
+        "mydomain.com/prod/env.json": "Config file for GoDaddy env.json"
+    }
+}

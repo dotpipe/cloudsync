@@ -1,0 +1,15 @@
+{
+    "configs": {
+        "myserver/dev/dns.txt": "Config file for IONOS dns.txt"
+        ,
+        "myserver/dev/env.json": "Config file for IONOS env.json"
+        ,
+        "myserver/dev/server-config.yml": "Config file for IONOS server-config.yml"
+        ,
+        "myserver/prod/dns.txt": "Config file for IONOS dns.txt"
+        ,
+        "myserver/prod/env.json": "Config file for IONOS env.json"
+        ,
+        "myserver/prod/server-config.yml": "Config file for IONOS server-config.yml"
+    }
+}

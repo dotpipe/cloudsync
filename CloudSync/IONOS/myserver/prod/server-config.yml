@@ -1,0 +1,4 @@
+server:
+  name: myserver
+  cpu: 2
+  ram: 4GB

@@ -1,0 +1,5 @@
+{
+  "provider": "godaddy",
+  "domain": "mydomain.com",
+  "api_key": "yourkey"
+}

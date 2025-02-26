@@ -1,0 +1,7 @@
+{
+  "provider": "bluehost",
+  "domain": "mydomain.com",
+  "cpanel_username": "blueuser",
+  "cpanel_password": "bluepass",
+  "ftp_host": "ftp.mydomain.com"
+}

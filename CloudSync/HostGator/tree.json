@@ -1,0 +1,11 @@
+{
+    "configs": {
+        "myblog.net/dev/dns.txt": "Config file for HostGator dns.txt"
+        ,
+        "myblog.net/dev/wp-config.php": "Config file for HostGator wp-config.php"
+        ,
+        "myblog.net/prod/dns.txt": "Config file for HostGator dns.txt"
+        ,
+        "myblog.net/prod/wp-config.php": "Config file for HostGator wp-config.php"
+    }
+}

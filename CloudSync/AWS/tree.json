@@ -1,0 +1,15 @@
+{
+    "configs": {
+        "myserver/dev/config.tf": "Config file for AWS config.tf"
+        ,
+        "myserver/dev/env.json": "Config file for AWS env.json"
+        ,
+        "myserver/dev/variables.tf": "Config file for AWS variables.tf"
+        ,
+        "myserver/prod/config.tf": "Config file for AWS config.tf"
+        ,
+        "myserver/prod/env.json": "Config file for AWS env.json"
+        ,
+        "myserver/prod/variables.tf": "Config file for AWS variables.tf"
+    }
+}

@@ -1,0 +1,3 @@
+# DNS Settings
+A   mydomain.com    192.168.1.1
+CNAME   www    mydomain.com

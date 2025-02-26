@@ -1,0 +1,11 @@
+{
+    "configs": {
+        "myshop.org/dev/config.yml": "Config file for SiteGround config.yml"
+        ,
+        "myshop.org/dev/dns.txt": "Config file for SiteGround dns.txt"
+        ,
+        "myshop.org/prod/config.yml": "Config file for SiteGround config.yml"
+        ,
+        "myshop.org/prod/dns.txt": "Config file for SiteGround dns.txt"
+    }
+}

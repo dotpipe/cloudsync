@@ -1,0 +1,15 @@
+{
+    "configs": {
+        "mydomain.com/dev/dns.txt": "Config file for Bluehost dns.txt"
+        ,
+        "mydomain.com/dev/env.json": "Config file for Bluehost env.json"
+        ,
+        "mydomain.com/dev/index.html": "Config file for Bluehost index.html"
+        ,
+        "mydomain.com/prod/dns.txt": "Config file for Bluehost dns.txt"
+        ,
+        "mydomain.com/prod/env.json": "Config file for Bluehost env.json"
+        ,
+        "mydomain.com/prod/index.html": "Config file for Bluehost index.html"
+    }
+}
