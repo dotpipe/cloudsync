@@ -26,6 +26,63 @@ $api_token = isset($config['cpanel_token']) ? $config['cpanel_token'] : 'No API 
             font-family: Arial, sans-serif;
             background: #f4f4f4;
         }
+        .mode-switch {
+  position: relative;
+  display: inline-block;
+}
+
+.mode-toggle {
+  display: none;
+}
+
+.mode-track {
+  display: block;
+  width: 114px;
+  height: 40px;
+  background-color: #eee;
+  border-radius: 20px;
+  cursor: pointer;
+  position: relative;
+}
+
+.mode-handle {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 39px;
+  z-index: 50;
+  height: 36px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: 0.3s;
+}
+
+.mode-label {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.mode-label.dev {
+  left: 10px;
+  color: #333;
+}
+
+.mode-label.prod {
+  right: 10px;
+  color: #333;
+}
+
+.mode-toggle:checked + .mode-track .mode-handle {
+  left: calc(100% - 41px);
+}
+
+.mode-toggle:checked + .mode-track {
+  background-color: #4CAF50;
+}
+
 
         .container {
             display: flex;
@@ -94,15 +151,15 @@ $api_token = isset($config['cpanel_token']) ? $config['cpanel_token'] : 'No API 
         }
 
         .button-container {
-    display: flex;
-    justify-content: space-between; /* Aligns buttons with space between them */
-    align-items: center; /* Aligns them on the same horizontal level */
-  }
+            display: flex;
+            justify-content: space-between; /* Aligns buttons with space between them */
+            align-items: center; /* Aligns them on the same horizontal level */
+        }
 
-  .open-login, .copy-api-token {
-    padding: 10px 20px;
-    margin: 5px;
-  }
+        .open-login, .copy-api-token {
+            padding: 10px 20px;
+            margin: 5px;
+        }
 
         #apiTokenContainer {
             display: flex;
@@ -177,7 +234,46 @@ $api_token = isset($config['cpanel_token']) ? $config['cpanel_token'] : 'No API 
             margin: 4px 0;
             box-sizing: border-box;
         }
+
+        .tree-item {
+            margin: 20px;
+            padding-left: 10px;
+            border-left: 2px solid #ccc;
+        }
+        .tree-item ul {
+            list-style-type: none;
+            padding-left: 20px;
+        }
+        .tree-item li {
+            margin: 5px 0;
+            cursor: pointer;
+            position: relative;
+        }
+        .tree-icon li::before {
+            content: "📂";
+            margin-right: 5px;
+        }
+        .tree-file li.file::before {
+            content: "📄";
+        }
+        .sub-tree li .tooltip {
+            display: none;
+            position: absolute;
+            left: 120%;
+            background: #000;
+            color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+        .sub-tree li:hover .tooltip {
+            display: block;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
+    <script src="pipes.js"></script>
 </head>
 
 <body>
@@ -207,18 +303,23 @@ $api_token = isset($config['cpanel_token']) ? $config['cpanel_token'] : 'No API 
                 <button id="backToHostBtn">Back</button>
                 <button id="createAppBtn">Create New App</button>
             </div>
+            <div id="file-tree"></div>
+
         </div>
 
         <!-- Main Content -->
         <div class="main-content" id="main-content">
             <!-- Mode Control -->
-            <div style="margin-bottom:10px;">
-                <label for="mode-select">Mode:</label>
-                <select id="mode-select">
-                    <option value="dev">Development Mode</option>
-                    <option value="prod">Production Mode</option>
-                </select>
+            <div class="mode-switch">
+                <input type="checkbox" id="mode-toggle" class="mode-toggle">
+                <label for="mode-toggle" class="mode-track">
+                    <span class="mode-handle"></span>
+                    <span class="mode-label dev">Dev</span>
+                    <span class="mode-label prod">Prod</span>
+                </label>
             </div>
+
+
             <!-- Tabs -->
             <div class="tabs">
                 <div class="tab active" data-tab="api-settings">API & Settings</div>
@@ -258,14 +359,7 @@ $api_token = isset($config['cpanel_token']) ? $config['cpanel_token'] : 'No API 
                 <br>
                 <button onclick="saveConfig()">Save Config</button>
                 <button onclick="deployConfig()">Deploy Config</button>
-                <button id="generate-modal">Generate Modal</button>
-                <div id="modala-preview"></div>
-            </div>
-            <!-- Preview Panel Tab -->
-            <div id="preview-panel" class="tab-content">
-                <h3>HTML Preview</h3>
-                <button onclick="openPreviewTab()">Open Live Preview</button>
-                <div id="html-preview"></div>
+                <button onclick="previewModalaInIndex()">Preview Modala</button>
             </div>
         </div>
     </div>
@@ -309,7 +403,7 @@ $api_token = isset($config['cpanel_token']) ? $config['cpanel_token'] : 'No API 
             </form>
         </div>
     </div>
-
+    <script src="script.js"></script>
     <script>
         // Utility selectors
         const $ = (sel) => document.querySelector(sel);
@@ -317,28 +411,56 @@ $api_token = isset($config['cpanel_token']) ? $config['cpanel_token'] : 'No API 
         const baseUrl = "http://localhost:8080/CloudSync/";
         let selectedConfigPath = null;
 
-        document.getElementById("generate-modal").addEventListener("click", function() {
-            // Step 1: Get the JSON content from the modala-editor
-            const editorContent = document.getElementById("modala-editor").value;
-
-            // Step 2: Try to parse the content as JSON
-            let jsonValue;
-            try {
-                jsonValue = JSON.parse(editorContent); // Assuming the editor contains valid JSON
-            } catch (e) {
-                console.error("Invalid JSON:", e);
-                return; // Stop if JSON is invalid
+        function renderFileTree(treeData, container) {
+            const ul = document.createElement('ul');
+            for (const key in treeData) {
+                if (key.match(/^[a-z]\d{2}$/)) {
+                    const li = document.createElement('li');
+                    li.textContent = treeData.label;
+                    if (treeData[key].length > 0) {
+                        li.appendChild(renderFileTree({[key]: treeData[key]}, container));
+                    }
+                    if (treeData.ajax) {
+                        li.setAttribute('data-ajax', treeData.ajax);
+                        li.setAttribute('data-insert', treeData.insert);
+                        li.title = treeData['tool-tip'];
+                        li.addEventListener('click', handleFileClick);
+                    }
+                    ul.appendChild(li);
+                }
             }
+            return ul;
+        }
 
-            // Step 3: Call the modala function with the parsed JSON and render in preview panel
-            const previewPanel = document.getElementById("modala-preview");
+        function handleFileClick(event) {
+            const filePath = event.target.getAttribute('data-ajax');
+            if (filePath) {
+                loadFileToEditor(filePath);
+            }
+        }
 
-            // Clear the preview panel before appending new content
-            previewPanel.innerHTML = ""; 
+        // document.getElementById("generate-modal").addEventListener("click", function() {
+        //     // Step 1: Get the JSON content from the modala-editor
+        //     const editorContent = document.getElementById("modala-editor").value;
 
-            // Call the modala function
-            modala(jsonValue, previewPanel);
-        });
+        //     // Step 2: Try to parse the content as JSON
+        //     let jsonValue;
+        //     try {
+        //         jsonValue = JSON.parse(editorContent); // Assuming the editor contains valid JSON
+        //     } catch (e) {
+        //         console.error("Invalid JSON:", e);
+        //         return; // Stop if JSON is invalid
+        //     }
+
+        //     // Step 3: Call the modala function with the parsed JSON and render in preview panel
+        //     const previewPanel = document.getElementById("modala-preview");
+
+        //     // Clear the preview panel before appending new content
+        //     previewPanel.innerHTML = ""; 
+
+        //     // Call the modala function
+        //     modala(jsonValue, previewPanel);
+        // });
 
         document.getElementById("copyToken").addEventListener("click", function() {
             const tokenElement = document.getElementById("apiToken");
@@ -446,16 +568,31 @@ $api_token = isset($config['cpanel_token']) ? $config['cpanel_token'] : 'No API 
             });
         }
 
+
+        <!-- Somewhere in your index.html, for example below your modala-editor text area -->
+
+        function previewModalaInIndex() {
+            // Get the content from the modala-editor textarea
+            var editorValue = document.getElementById("modala-editor").value;
+            
+            // Send the content to the server using fetch POST to save_modala.php
+            fetch('save_modala.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'modala_editor=' + encodeURIComponent(editorValue)
+            })
+            .then(response => response.text())
+            .then(result => {
+                // Optionally, you can alert the result: alert(result);
+                // Open the preview_modala.php page in a new window or tab\n
+                window.open('preview_modala.php', '_blank');
+            })
+            .catch(error => console.error("Error saving modala content:", error));
+        }
+
         /* ---------- Mode & Connection Info ---------- */
-        $("#mode-select").addEventListener("change", function () {
-            const mode = this.value;
-            if (mode === "prod") {
-                $("#main-content").style.minHeight = "100vh";
-            } else {
-                $("#main-content").style.minHeight = "auto";
-            }
-            loadConnectionInfo(mode);
-        });
 
         function loadConnectionInfo(mode) {
             const host = $("#hostSelect").value;
@@ -653,7 +790,49 @@ $api_token = isset($config['cpanel_token']) ? $config['cpanel_token'] : 'No API 
             initHostAppSelection();
             initLoginModal();
             initAddConnectionModal();
+
         });
+
+        // function renderFileTree(treeData, container) {
+        //     const ul = document.createElement('ul');
+        //     for (const key in treeData) {
+        //         if (key.match(/^[a-z]\d{2}$/)) {
+        //             const li = document.createElement('li');
+        //             li.textContent = treeData.label;
+        //             if (treeData[key].length > 0) {
+        //                 li.appendChild(renderFileTree({[key]: treeData[key]}, container));
+        //             }
+        //             if (treeData.ajax) {
+        //                 li.setAttribute('data-ajax', treeData.ajax);
+        //                 li.setAttribute('data-insert', treeData.insert);
+        //                 li.title = treeData['tool-tip'];
+        //                 li.addEventListener('click', handleFileClick);
+        //             }
+        //             ul.appendChild(li);
+        //         }
+        //     }
+        //     return ul;
+        // }
+
+        function handleFileClick(event) {
+            const filePath = event.target.getAttribute('data-ajax');
+            if (filePath) {
+                loadFileToEditor(filePath);
+            }
+        }
+
+        document.getElementById("appSelect").addEventListener('change', () => {
+            const hostName = document.getElementById("hostSelect").value;
+            const appName = document.getElementById("appSelect").value;
+            
+            fetch(`getFileTree.php?host=${hostName}&app=${appName}`)
+                .then(response => response.json())
+                .then(jsonData => {
+                    console.log(jsonData);
+                    renderTree(jsonData, "file-tree");
+                });
+        });
+
     </script>
 </body>
 

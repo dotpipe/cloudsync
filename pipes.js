@@ -327,7 +327,6 @@ function renderTree(value, tempTag) {
     temp.textContent = value.textContent || value.label;
     if (temp.textContent.length == 0) {
         console.error("No text content for tree item. Use \"label\" or \"textContent\"");
-        exit();
     }
 
     Object.entries(value).forEach(([k, v]) => {
@@ -354,7 +353,7 @@ function renderTree(value, tempTag) {
     });
 
     // temp = htmlDecode(temp);
-
+    tempTag.appendChild(document.createElement("br"));
     tempTag.appendChild(temp);
 
     return tempTag;
